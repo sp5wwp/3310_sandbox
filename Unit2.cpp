@@ -299,7 +299,6 @@ void __fastcall TForm2::SpeedButton2Click(TObject *Sender)
 	{
 		if(strlen(message)>0)
 		{
-			//message[strlen(message)-1]=0;
 			memset(&message[strlen(message)-1], 0, sizeof(message)-strlen(message));
 			pos=strlen(message);
 			memset(code, 0, strlen(code));
@@ -329,7 +328,7 @@ void __fastcall TForm2::SpeedButton4Click(TObject *Sender)
 void __fastcall TForm2::SpeedButton5Click(TObject *Sender)
 {
 	//1
-	char *last = &message[strlen(message)];
+	char *last = &message[pos];
 
 	if(*last=='.')
 		*last=',';
@@ -342,7 +341,7 @@ void __fastcall TForm2::SpeedButton5Click(TObject *Sender)
 	else if(*last=='?')
 		*last='.';
 	else
-		*last='.';
+		message[pos] = '.';
 
 	memset(code, 0, strlen(code));
 
@@ -372,6 +371,12 @@ void __fastcall TForm2::SpeedButton6Click(TObject *Sender)
 	}
 	else
 	{
+		if(Timer1->Enabled)
+		{
+			pos++;
+		}
+
+		Timer1->Enabled = false;
 		char *last = &message[pos];
 
 		switch(*last)
@@ -424,6 +429,12 @@ void __fastcall TForm2::SpeedButton7Click(TObject *Sender)
 	}
 	else
 	{
+		if(Timer1->Enabled)
+		{
+			pos++;
+		}
+
+		Timer1->Enabled = false;
 		char *last = &message[pos];
 
 		switch(*last)
@@ -476,6 +487,12 @@ void __fastcall TForm2::SpeedButton8Click(TObject *Sender)
 	}
 	else
 	{
+		if(Timer1->Enabled)
+		{
+			pos++;
+		}
+
+		Timer1->Enabled = false;
 		char *last = &message[pos];
 
 		switch(*last)
@@ -528,6 +545,12 @@ void __fastcall TForm2::SpeedButton9Click(TObject *Sender)
 	}
 	else
 	{
+		if(Timer1->Enabled)
+		{
+            pos++;
+		}
+
+		Timer1->Enabled = false;
 		char *last = &message[pos];
 
 		switch(*last)
@@ -580,6 +603,12 @@ void __fastcall TForm2::SpeedButton10Click(TObject *Sender)
 	}
 	else
 	{
+		if(Timer1->Enabled)
+		{
+			pos++;
+		}
+
+		Timer1->Enabled = false;
 		char *last = &message[pos];
 
 		switch(*last)
@@ -632,6 +661,12 @@ void __fastcall TForm2::SpeedButton11Click(TObject *Sender)
 	}
 	else
 	{
+		if(Timer1->Enabled)
+		{
+			pos++;
+		}
+
+		Timer1->Enabled = false;
 		char *last = &message[pos];
 
 		switch(*last)
@@ -688,6 +723,12 @@ void __fastcall TForm2::SpeedButton12Click(TObject *Sender)
 	}
 	else
 	{
+		if(Timer1->Enabled)
+		{
+			pos++;
+		}
+
+		Timer1->Enabled = false;
 		char *last = &message[pos];
 
 		switch(*last)
@@ -740,6 +781,12 @@ void __fastcall TForm2::SpeedButton13Click(TObject *Sender)
 	}
 	else
 	{
+		if(Timer1->Enabled)
+		{
+			pos++;
+		}
+
+    	Timer1->Enabled = false;
 		char *last = &message[pos];
 
 		switch(*last)
@@ -792,7 +839,13 @@ void __fastcall TForm2::SpeedButton14Click(TObject *Sender)
 	}
 	else
 	{
-        char *last = &message[pos];
+		if(Timer1->Enabled)
+		{
+			pos++;
+		}
+
+		Timer1->Enabled = false;
+		char *last = &message[pos];
 
 		switch(*last)
 		{
@@ -809,7 +862,7 @@ void __fastcall TForm2::SpeedButton14Click(TObject *Sender)
 			break;
 		}
 
-        Timer1->Enabled = false;
+		Timer1->Enabled = false;
 		Timer1->Enabled = true;
 	}
 
