@@ -183,6 +183,12 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <ItemGroup>
+        <None Include="dict_en.h">
+            <BuildOrder>3</BuildOrder>
+        </None>
+        <None Include="fonts.h">
+            <BuildOrder>4</BuildOrder>
+        </None>
         <CppCompile Include="Project1.cpp">
             <BuildOrder>0</BuildOrder>
         </CppCompile>

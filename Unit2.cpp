@@ -22,6 +22,17 @@ typedef enum
 
 text_entry_t text_mode = TEXT_NORM;
 
+typedef enum
+{
+	DISP_NONE,
+	DISP_SPLASH,
+	DISP_MAIN_SCR,
+	DISP_MENU,
+    DISP_TEXT_ENTRY
+} disp_state_t;
+
+disp_state_t disp_state = DISP_NONE;
+
 const uint8_t p_width = 2;
 const uint32_t col_bg = ((98<<16) | (143<<8) | 110); //BGR
 
@@ -216,6 +227,46 @@ char *addCode(char *code, char symbol)
 	return getWord(dict_en, code);
 }
 
+void showMenu(char *title)
+{
+    disp_state = DISP_MENU;
+	clrScreen(1);
+
+	setString(0, 0, &nokia_small_bold, title, 0, ALIGN_CENTER);
+
+    drawRect(0, 8, RES_X-1, 2*9-1, 0, 1);
+	setString(1, 1*9, &nokia_small, (char*)"Messaging", 1, ALIGN_ARB);
+	setString(1, 2*9, &nokia_small, (char*)"RF settings", 0, ALIGN_ARB);
+	setString(1, 3*9, &nokia_small, (char*)"M17 settings", 0, ALIGN_ARB);
+	setString(1, 4*9, &nokia_small, (char*)"Misc.", 0, ALIGN_ARB);
+}
+
+void showMainScreen(void)
+{
+	disp_state = DISP_MAIN_SCR;
+	clrScreen(1);
+
+	setString(0, 0*9, &nokia_small, (char*)"M17", 0, ALIGN_LEFT);
+
+	setString(0, 15, &nokia_big, (char*)"SR5MS", 0, ALIGN_CENTER);
+	setString(0, 30, &nokia_small, (char*)"438.8125", 0, ALIGN_CENTER);
+
+	;
+}
+
+void showTextEntry(void)
+{
+	disp_state = DISP_TEXT_ENTRY;
+	clrScreen(1);
+
+    if(text_mode==TEXT_T9)
+		setString(0, 0, &nokia_small, (char*)"T9", 0, ALIGN_LEFT);
+	else
+		setString(0, 0, &nokia_small, (char*)"Abc", 0, ALIGN_LEFT);
+
+	setString(0, RES_Y-8, &nokia_small_bold, (char*)"Options", 0, ALIGN_CENTER);
+}
+
 void __fastcall TForm2::FormPaint(TObject *Sender)
 {
 	Form2->Canvas->Brush->Color = TColor(col_bg);
@@ -226,22 +277,36 @@ void __fastcall TForm2::FormPaint(TObject *Sender)
 void __fastcall TForm2::SpeedButton1Click(TObject *Sender)
 {
 	//OK
-    ;
+	if(disp_state==DISP_MAIN_SCR)
+	{
+		showMenu((char*)"Main menu");
+	}
+	else if(disp_state==DISP_MENU)
+	{
+		showTextEntry();
+    }
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm2::SpeedButton2Click(TObject *Sender)
 {
 	//Cancel
-	if(strlen(message)>0)
+	if(disp_state==DISP_MENU)
 	{
-		//message[strlen(message)-1]=0;
-		memset(&message[strlen(message)-1], 0, sizeof(message)-strlen(message));
-		pos=strlen(message);
-		memset(code, 0, strlen(code));
+		showMainScreen();
+    }
+	else if(disp_state==DISP_TEXT_ENTRY)
+	{
+		if(strlen(message)>0)
+		{
+			//message[strlen(message)-1]=0;
+			memset(&message[strlen(message)-1], 0, sizeof(message)-strlen(message));
+			pos=strlen(message);
+			memset(code, 0, strlen(code));
 
-		drawRect(0, 10, RES_X-1, RES_Y-9, 1, 1);
-		setString(0, 10, &nokia_small, message, 0, ALIGN_LEFT);
+			drawRect(0, 10, RES_X-1, RES_Y-9, 1, 1);
+			setString(0, 10, &nokia_small, message, 0, ALIGN_LEFT);
+		}
 	}
 }
 //---------------------------------------------------------------------------
@@ -264,7 +329,7 @@ void __fastcall TForm2::SpeedButton4Click(TObject *Sender)
 void __fastcall TForm2::SpeedButton5Click(TObject *Sender)
 {
 	//1
-	char *last = &message[pos];
+	char *last = &message[strlen(message)];
 
 	if(*last=='.')
 		*last=',';
@@ -769,38 +834,39 @@ void __fastcall TForm2::SpeedButton15Click(TObject *Sender)
 void __fastcall TForm2::SpeedButton16Click(TObject *Sender)
 {
 	//#
-	if(text_mode==TEXT_T9)
-		text_mode = TEXT_NORM;
-	else
-		text_mode = TEXT_T9;
+	if(disp_state==DISP_TEXT_ENTRY)
+	{
+		if(text_mode==TEXT_T9)
+			text_mode = TEXT_NORM;
+		else
+			text_mode = TEXT_T9;
 
-    drawRect(0, 0, 15, 8, 1, 1);
+		drawRect(0, 0, 15, 8, 1, 1);
 
-	if(text_mode==TEXT_T9)
-		setString(0, 0, &nokia_small, (char*)"T9", 0, ALIGN_LEFT);
-	else
-		setString(0, 0, &nokia_small, (char*)"Abc", 0, ALIGN_LEFT);
+		if(text_mode==TEXT_T9)
+			setString(0, 0, &nokia_small, (char*)"T9", 0, ALIGN_LEFT);
+		else
+			setString(0, 0, &nokia_small, (char*)"Abc", 0, ALIGN_LEFT);
+	}
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm2::SpeedButton17Click(TObject *Sender)
 {
 	//On/Off
-	setString(0, 9, &nokia_big, (char*)"OPN", 0, ALIGN_CENTER);
-	setString(0, 22, &nokia_big, (char*)"RTX", 0, ALIGN_CENTER);
+	disp_state = DISP_SPLASH;
+
+    clrScreen(1);
+
+	setString(0, 9, &nokia_big, (char*)"Welcome", 0, ALIGN_CENTER);
+	setString(0, 22, &nokia_big, (char*)"message", 0, ALIGN_CENTER);
 	setString(0, 41, &nokia_small, (char*)"SP5WWP", 0, ALIGN_CENTER);
 
     Sleep(1000);
 
 	clrScreen(1);
 
-	if(text_mode==TEXT_T9)
-		setString(0, 0, &nokia_small, (char*)"T9", 0, ALIGN_LEFT);
-	else
-		setString(0, 0, &nokia_small, (char*)"Abc", 0, ALIGN_LEFT);
-
-	setString(0, 0, &nokia_small_bold, (char*)"Message", 0, ALIGN_CENTER);
-	setString(0, RES_Y-8, &nokia_small_bold, (char*)"Send", 0, ALIGN_CENTER);
+	showMainScreen();
 }
 //---------------------------------------------------------------------------
 
